@@ -1,0 +1,109 @@
+use OnlineStore;
+
+create table Products
+(
+	ProductID int primary key identity(1,1),
+	Name nvarchar(max) not null,
+	Price money not null,
+	Quantity int not null,
+	Details nvarchar(max) not null
+)
+
+create table ProductImages
+(
+	ImageID int primary key identity(1,1),
+	Image nvarchar(max) not null,
+	ProductID int not null,
+	constraint FK_Product foreign key(ProductID) references Products(ProductID)
+)
+
+create table Customers
+(
+	CustomerID int primary key identitY(1,1),
+	FirstName nvarchar(100) not null,
+	LastName nvarchar(100) not null,
+	Address nvarchar(max) not null,
+	LoginCredentials nvarchar(max) not null
+)
+
+create table CustomerPhone
+(
+	PhoneID int primary key identity(1,1),
+	Phone nvarchar(50) not null,
+	CustomerID int not null,
+	constraint FK_CustomerID foreign key(CustomerID) references Customers(CustomerID)
+)
+
+create table Reviews
+(
+	ReviewID int primary key identity(1,1),
+	ReviewText nvarchar(max) null,
+	RateScore int not null,
+	CustomerID int not null,
+	ProductID int not null,
+	constraint FK_CustomerrID foreign key(CustomerID) references Customers(CustomerID),
+	constraint FK_ProducttID foreign key(ProductID) references Products(ProductID),
+	constraint CHK_CheckScore check (RateScore=1 or RateScore=2 or RateScore=3 or RateScore=4 or RateScore=5)
+)
+
+create table PaymentTransactions
+(
+	PaymentID int primary key identity(1,1),
+	PaymentAmount money not null,
+	PaymentMethod money not null,
+	TimeStamp datetime not null,
+	PaymentDate date not null,
+	Customer int not null,
+	constraint FK_CustomerPaymentTransactions foreign key(Customer) references Customers(CustomerID)
+)
+
+create table ShippingStatus
+(
+	ShippingID int primary key identity(1,1),
+	Status nvarchar(100) not null
+)
+
+create table Shipping 
+(
+	ShippingID int primary key identity(1,1),
+	ShippingCarrier nvarchar(max) not null,
+	EstimatedDeliveryDate date not null,
+	ActualDeliveryDate date not null,
+	TrakingNumber int not null,
+	Nots nvarchar(max) null,
+	Shipping_Status int not null,
+	constraint FK_Shipping_Status foreign key(Shipping_Status) references ShippingStatus(ShippingID)
+)
+
+create table OrderStatus
+(
+	StatusID int primary key identity(1,1),
+	Status nvarchar(200) not null
+)
+
+create table Orders
+(
+	OrderID int primary key identity(1,1),
+	OrderNumber int not null,
+	DateTimeOrder datetime not null,
+	Customer int not null,
+	Status int not null,
+	Shipping int not null,
+	constraint FK_CustomerOrders foreign key(Customer) references Customers(CustomerID),
+	constraint FK_Status foreign key(Status) references OrderStatus(StatusID),
+	constraint FK_Shipping foreign key(Shipping) references Shipping(ShippingID)
+)
+
+create table Containers
+(
+	RecordID int primary key identity(1,1),
+	AmountOfProduct int not null,
+	TotalPrice money not null,
+	Product int not null,
+	N_Order int not null,
+	constraint FK_Productt foreign key(Product) references Products(ProductID),
+	constraint FK_N_Order foreign key(N_Order) references Orders(OrderID)
+)
+
+backup database OnlineStore
+to Disk='c:/OnlineStore.bak'
